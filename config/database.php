@@ -62,6 +62,22 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'mysql_external' =>[
+        
+          'driver' => 'mysql',
+          'url' => NULL,
+          'host' => '127.0.0.1',
+          'port' => '3306',
+          'database' =>'',
+          'username' =>  "root",
+          'password' =>"",
+          'unix_socket' => '',
+          'charset' => 'utf8mb4',
+          'collation' => 'utf8mb4_unicode_ci',
+          'prefix' => '',
+          'strict' => true,
+          'engine' => 'InnoDB',
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
