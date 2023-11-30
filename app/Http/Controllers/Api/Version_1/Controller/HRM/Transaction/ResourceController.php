@@ -3,24 +3,29 @@
 namespace App\Http\Controllers\Api\Version_1\Controller\HRM\Transaction;
 
 use App\Http\Controllers\Api\Version_1\Service\HRM\Transaction\ResourceService;
+use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ResourceController extends Controller
 {
-    public function __construct(ResourceService $ResourceService)
+    public function __construct(ResourceService $ResourceService,CommonService $commonService)
     {
         $this->ResourceService = $ResourceService;
+        $this->commonService = $commonService;
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($orgId)
     {
-
+        Log::info('ResourceController-> index Inside.' . json_encode($orgId));
+        $response = $this->ResourceService->findAll($orgId);
+        Log::info('ResourceController>Store Return.' . json_encode($response));
+        return $response;
     }
 
     /**
@@ -108,4 +113,47 @@ class ResourceController extends Controller
 
         return $response;
     }
+    public function resourceMobileOtp(Request $request, $orgId)
+{
+    Log::info('ResourceController > resourceMobileOtp.' . json_encode($request->all()));
+    $response = $this->ResourceService->resourceMobileOtp($request->all(),$orgId);
+    Log::info('ResourceController> resourceMobileOtp .' . json_encode($response));
+    return $response;
+
+}
+public function resourceMobileOtpValidate(Request $request, $orgId)
+{
+    Log::info('ResourceController > resourceMobileOtpValidate.' . json_encode($request->all()));
+    $response = $this->ResourceService->resourceMobileOtpValidate($request->all(),$orgId);
+    Log::info('ResourceController > resourceMobileOtpValidate .' . json_encode($response));
+    return $response;
+
+}
+public function resourceEmailOtp(Request $request, $orgId)
+{
+    Log::info('ResourceController > resourceEmailOtp.' . json_encode($request->all()));
+    $response = $this->ResourceService->resourceEmailOtp($request->all(),$orgId);
+    Log::info('ResourceController > resourceEmailOtp .' . json_encode($response));
+    return $response;
+
+}
+public function resourceEmailOtpValidate(Request $request, $orgId)
+{
+    Log::info('ResourceController > resourceEmailOtpValidate.' . json_encode($request->all()));
+    $response = $this->ResourceService->resourceEmailOtpValidate($request->all(),$orgId);
+    Log::info('ResourceController> resourceEmailOtpValidate .' . json_encode($response));
+    return $response;
+
+}
+public function masterDatasForResource(Request $request, $orgId)
+{
+    
+    Log::info('ResourceController > masterDatasForResource.' . json_encode($request->all()));
+    $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
+    $response = $this->ResourceService->resourceAndPersonMasterDatas($request->all(),$orgId);
+    Log::info('ResourceController> masterDatasForResource .' . json_encode($response));
+    return $this->commonService->sendResponse($response,true);
+
+
+}
 }
