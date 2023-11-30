@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\Version_1\Service\HRM\Master;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesignationInterface;
+use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesginationInterface;
 use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DepartmentInterface;
+use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesignationInterface;
 use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Models\HrmDepartment;
 use App\Models\HrmDesignation;
@@ -17,9 +18,9 @@ use Illuminate\Support\Facades\Log;
 class DesignationService
 {
     protected $DesginationInterface,$commonService,$DepartmentInterface;
-    public function __construct(DesignationInterface $DesignationInterface, CommonService $commonService,DepartmentInterface $DepartmentInterface)
+    public function __construct(DesignationInterface $DesginationInterface, CommonService $commonService,DepartmentInterface $DepartmentInterface)
     {
-        $this->DesignationInterface = $DesignationInterface;
+        $this->DesginationInterface = $DesginationInterface;
         $this->commonService = $commonService;
         $this->DepartmentInterface = $DepartmentInterface;
     }
@@ -27,7 +28,7 @@ class DesignationService
     {
 
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-        $models = $this->DesignationInterface->findAll();
+        $models = $this->DesginationInterface->findAll();
         $department = $this->DepartmentInterface->findAll();
         $responseArray = ['model' => $models, 'department' => $department];
         return $this->commonService->sendResponse($responseArray,true);
@@ -37,7 +38,7 @@ class DesignationService
     {
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $model = $this->convertToModel($data);
-        $response = $this->DesignationInterface->store($model);
+        $response = $this->DesginationInterface->store($model);
 
         return $response;
     }
@@ -49,7 +50,7 @@ class DesignationService
         $data = (object)$data;
         $id=isset($data->id)?$data->id:null;
         if ($id) {
-            $model = $this->interface->findById($id);
+            $model = $this->DesginationInterface->findById($id);
             // $model->last_updated_by = auth()->user()->uid;
             $model->last_updated_by = null;
 
@@ -64,12 +65,13 @@ class DesignationService
         $model->dept_id = $data->department;
         $model->description = $data->description;
         $model->pfm_active_status_id = isset($data->activeStatus) ? $data->activeStatus : 1;
+      
         return $model;
     }
     public function findById($orgId, $id)
     {
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-        $response = $this->DesignationInterface->findById($id);
+        $response = $this->DesginationInterface->findById($id);
         $department = $this->DepartmentInterface->findAll();
         $responseArray = ['responseModelData' => $response, 'department' => $department];
 
@@ -78,10 +80,10 @@ class DesignationService
     public function destroyById($orgId, $id)
     {
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-        $model = $this->DesignationInterface->findById($id);
+        $model = $this->DesginationInterface->findById($id);
         if($model)
         {
-        $destory=$this->DesignationInterface->destroyForDesignationByUid($model->id);
+        $destory=$this->DesginationInterface->destroyForDesignationByUid($model->id);
         if( $destory){
             return $this->commonService->sendResponse("Deleted Successfully", true);
         }else{
@@ -99,7 +101,7 @@ public function create($orgId)
 public function findDesignationByDeptId($orgId,$deptId)
     {
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-        $response = $this->DesignationInterface->findByDeptId($deptId);
+        $response = $this->DesginationInterface->findByDeptId($deptId);
         return $this->commonService->sendResponse($response,true);
     }
 }

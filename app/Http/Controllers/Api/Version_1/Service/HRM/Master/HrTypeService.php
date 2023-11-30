@@ -45,7 +45,8 @@ class HrTypeService
         $data = (object)$data;
         $id = isset($data->id)?$data->id:null;
         if ($id) {
-            $model = $this->interface->findById($id);
+            $model = $this->HrTypeInterface->findById($id);
+         
             // $model->last_updated_by=auth()->user()->uid;
             $model->last_updated_by=null;
 
