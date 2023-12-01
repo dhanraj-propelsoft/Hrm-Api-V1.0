@@ -147,10 +147,9 @@ public function resourceEmailOtpValidate(Request $request, $orgId)
 }
 public function masterDatasForResource(Request $request, $orgId)
 {
-    
+
     Log::info('ResourceController > masterDatasForResource.' . json_encode($request->all()));
-    $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-    $response = $this->ResourceService->resourceAndPersonMasterDatas($request->all(),$orgId);
+    $response = $this->ResourceService->masterDatasForResource($request->all(),$orgId);
     Log::info('ResourceController> masterDatasForResource .' . json_encode($response));
     return $this->commonService->sendResponse($response,true);
 

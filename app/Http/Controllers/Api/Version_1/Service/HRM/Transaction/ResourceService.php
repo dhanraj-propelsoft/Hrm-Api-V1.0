@@ -271,19 +271,18 @@ class ResourceService
     }
     public function resourceMobileOtp($datas, $orgId)
     {
-       
+
         log::info('hrmResourceService  ->resourceMobileOtp ' . json_encode($datas));
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $response = Http::post(config('person_api_base') . 'personMobileOtp', $datas);
         if ($response->successful()) {
             $responseData = $response->json();
-            if($responseData['success']==true)
-            {
+            if ($responseData['success'] == true) {
                 $result = ['type' => 1, 'status' => "OtpSuccessfully", 'datas' => $datas];
-            }else{
+            } else {
                 $result = ['type' => 2, 'status' => "OtpFailed", 'datas' => "Mobile Not Found"];
             }
-            return $this->commonService->sendResponse($result,true);
+            return $this->commonService->sendResponse($result, true);
         } else {
             $errorCode = $response->status();
             $errorMessage = $response->body();
@@ -293,18 +292,16 @@ class ResourceService
 
     public function resourceMobileOtpValidate($datas, $orgId)
     {
-      
+
         $datas = (object) $datas;
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $response = Http::post(config('person_api_base') . 'getPersonMobileNoByUid', $datas);
         if ($response->successful()) {
             $responseData = $response->json();
-            if($responseData['data']['original']['success']==true)
-            {
-              $mobileData = $responseData['data']['original']['data'];
-            }
-            else{
-                return $this->commonService->sendResponse('mobileNo Not Found',false);
+            if ($responseData['data']['original']['success'] == true) {
+                $mobileData = $responseData['data']['original']['data'];
+            } else {
+                return $this->commonService->sendResponse('mobileNo Not Found', false);
             }
         } else {
             $errorCode = $response->status();
@@ -312,96 +309,86 @@ class ResourceService
             dd("Error: $errorCode - $errorMessage");
         }
         if ($mobileData['otp_received'] == $datas->otp) {
-            $resourceMaster=$this->resourceAndPersonMasterDatas($datas->uid);
-            $result=[ 'type' => 1,
-            'status' => "OTP Successfully", 'resourceMaster' =>$resourceMaster];
-           
+            $resourceMaster = $this->resourceAndPersonMasterDatas($datas->uid);
+            $result = ['type' => 1,
+                'status' => "OTP Successfully", 'resourceMaster' => $resourceMaster];
+
         } else {
-            $result = ['Status' => 'Invalid OTP', 'datas' =>Null];
+            $result = ['Status' => 'Invalid OTP', 'datas' => null];
         }
 
-        return $this->commonService->sendResponse($result,true);
+        return $this->commonService->sendResponse($result, true);
     }
     public function resourceEmailOtp($datas, $orgId)
     {
         $datas = (object) $datas;
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-       $response = Http::post(config('person_api_base') . 'resendOtpForSecondaryEmail', $datas);
+        $response = Http::post(config('person_api_base') . 'resendOtpForSecondaryEmail', $datas);
         if ($response->successful()) {
             $responseData = $response->json();
-            if($responseData['data']['type']==1)
-            {
+            if ($responseData['data']['type'] == 1) {
                 $result = ['type' => 1, 'status' => "OtpSuccessfully", 'datas' => $datas];
-            }else{
+            } else {
                 $result = ['type' => 2, 'status' => "OtpFailed", 'datas' => "Email Not Found"];
             }
-            return $this->commonService->sendResponse($result,true);
+            return $this->commonService->sendResponse($result, true);
         } else {
             $errorCode = $response->status();
             $errorMessage = $response->body();
             dd("Error: $errorCode - $errorMessage");
         }
-}
+    }
 
-public function resourceAndPersonMasterDatas($uid)
-{
-    if($uid)
+    public function resourceAndPersonMasterDatas($uid)
     {
-        $response = Http::get(config('person_api_base') . 'getPersonMasterData');
+        if ($uid) {
+            $response = Http::get(config('person_api_base') . 'getPersonMasterData');
             if ($response->successful()) {
                 $responseData = $response->json();
                 $MasterData = $responseData['data'];
-            }
-            else {
+            } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
                 dd("Error: $errorCode - $errorMessage");
             }
-            $response = Http::post(config('person_api_base') . 'getPersonPrimaryDataByUid',$uid);
+            $response = Http::post(config('person_api_base') . 'getPersonPrimaryDataByUid', $uid);
             if ($response->successful()) {
                 $responseData = $response->json();
-                if($responseData['data']['original']['success']==true)
-            {
-                $personPrimaryData = $responseData['data']['original']['data'];
-            }
-            else{
-                return $this->commonService->sendResponse('Uid Not Found',false);
-            }
-            }
-            else {
+                if ($responseData['data']['original']['success'] == true) {
+                    $personPrimaryData = $responseData['data']['original']['data'];
+                } else {
+                    return $this->commonService->sendResponse('Uid Not Found', false);
+                }
+            } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
                 dd("Error: $errorCode - $errorMessage");
             }
-           
-            $response = Http::post(config('person_api_base') . 'personMotherTongueByUid',$uid);
+
+            $response = Http::post(config('person_api_base') . 'personMotherTongueByUid', $uid);
             if ($response->successful()) {
                 $responseData = $response->json();
                 $personMotherTongues = $responseData['data']['original']['data'];
-            }
-            else {
+            } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
                 dd("Error: $errorCode - $errorMessage");
             }
-           $response = Http::post(config('person_api_base') . 'personGetAnniversaryDate',$uid);
-           if ($response->successful()) {
-               $responseData = $response->json();
-               $personAnniversaryDate = $responseData['data']['original']['data'];
-           }
-           else {
-               $errorCode = $response->status();
-               $errorMessage = $response->body();
-               dd("Error: $errorCode - $errorMessage");
-           }
+            $response = Http::post(config('person_api_base') . 'personGetAnniversaryDate', $uid);
+            if ($response->successful()) {
+                $responseData = $response->json();
+                $personAnniversaryDate = $responseData['data']['original']['data'];
+            } else {
+                $errorCode = $response->status();
+                $errorMessage = $response->body();
+                dd("Error: $errorCode - $errorMessage");
+            }
 
-           
-            $response = Http::post(config('person_api_base') . 'personAddressByUid',$uid);
+            $response = Http::post(config('person_api_base') . 'personAddressByUid', $uid);
             if ($response->successful()) {
                 $responseData = $response->json();
                 $personAddress = $responseData['data']['original']['data'];
-            }
-            else {
+            } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
                 dd("Error: $errorCode - $errorMessage");
@@ -421,36 +408,53 @@ public function resourceAndPersonMasterDatas($uid)
                 'personAnniversaryDate' => $personAnniversaryDate,
                 'personAddress' => $personAddress,
             ];
+        }
     }
-}
-public function resourceEmailOtpValidate($datas, $orgId)
-{
-    $datas = (object) $datas;
-    $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
-  $response = Http::post(config('person_api_base') . 'getPersonEmailByUidAndEmail', $datas);
+    public function resourceEmailOtpValidate($datas, $orgId)
+    {
+        $datas = (object) $datas;
+        $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
+        $response = Http::post(config('person_api_base') . 'getPersonEmailByUidAndEmail', $datas);
         if ($response->successful()) {
             $responseData = $response->json();
-          
-            if($responseData['data']['original']['success']==true)
-            {
-              $emailData = $responseData['data']['original']['data'];
-            }
-            else{
-                return $this->commonService->sendResponse('Email Not Found',false);
+
+            if ($responseData['data']['original']['success'] == true) {
+                $emailData = $responseData['data']['original']['data'];
+            } else {
+                return $this->commonService->sendResponse('Email Not Found', false);
             }
         } else {
             $errorCode = $response->status();
             $errorMessage = $response->body();
             dd("Error: $errorCode - $errorMessage");
         }
-    if ($emailData['otp_received'] == $datas->otp) {
-        $resourceMaster=$this->resourceAndPersonMasterDatas($datas->uid);
-        $result=[ 'type' => 1,
-        'status' => "OTP Successfully", 'resourceMaster' =>$resourceMaster];   
-    } else {
-        $result = ['Status' => 'Invalid OTP', 'datas' =>Null];
+        if ($emailData['otp_received'] == $datas->otp) {
+            $resourceMaster = $this->resourceAndPersonMasterDatas($datas->uid);
+            $result = ['type' => 1,
+                'status' => "OTP Successfully", 'resourceMaster' => $resourceMaster];
+        } else {
+            $result = ['Status' => 'Invalid OTP', 'datas' => null];
+        }
+        return $this->commonService->sendResponse($result, true);
     }
-    return $this->commonService->sendResponse($result,true);
+    public function masterDatasForResource($datas, $orgId)
+    {
+        $datas = (object) $datas;
+        $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
+        $resourceMaster=$this->resourceAndPersonMasterDatas($datas->uid);
+        $response = Http::post(config('person_api_base') . 'getPersonPrimaryDataByUid', $datas->uid);
+            if ($response->successful()) {
+                $responseData = $response->json();
+                if ($responseData['data']['original']['success'] == true) {
+                    $resourceMaster['personDetails'] = $responseData['data']['original']['data'];
+                } else {
+                    return $this->commonService->sendResponse('Uid Not Found', false);
+                }
+            } else {
+                $errorCode = $response->status();
+                $errorMessage = $response->body();
+                dd("Error: $errorCode - $errorMessage");
+            }
+            return $this->commonService->sendResponse($resourceMaster, true);
     }
 }
-
