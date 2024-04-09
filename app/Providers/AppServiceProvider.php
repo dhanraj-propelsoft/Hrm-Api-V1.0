@@ -14,10 +14,10 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Common\CommonInterface','App\Http\Controllers\Api\Version_1\Repositories\Common\CommonRepository');
-        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DepartmentInterface','App\Http\Controllers\Api\Version_1\Repositories\Hrm\Master\DepartmentRepository');
-        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesignationInterface','App\Http\Controllers\Api\Version_1\Repositories\Hrm\Master\DesignationRepository');
-        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\HrTypeInterface','App\Http\Controllers\Api\Version_1\Repositories\Hrm\Master\HrTypeRepository');
-        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Hrm\Transaction\ResourceInterface','App\Http\Controllers\Api\Version_1\Repositories\Hrm\Transaction\ResourceRepository');
+        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DepartmentInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Master\DepartmentRepository');
+        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DesignationInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Master\DesignationRepository');
+        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Master\HrTypeInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Master\HrTypeRepository');
+        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Transaction\ResourceInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Transaction\ResourceRepository');
 
 
     }
