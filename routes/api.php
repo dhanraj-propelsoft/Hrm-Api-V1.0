@@ -20,3 +20,4 @@ use App\Http\Controllers\Api\Version_1\Controller\HRM\Master\DepartmentControlle
 // });
  include_once('Version_1/hrmMaster.php');
  include_once('Version_1/hrmTransation.php');
+ include_once('Version_1/inventory.php');

@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DesignationInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Master\DesignationRepository');
         $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Master\HrTypeInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Master\HrTypeRepository');
         $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\HRM\Transaction\ResourceInterface','App\Http\Controllers\Api\Version_1\Repositories\HRM\Transaction\ResourceRepository');
+        $this->app->bind('App\Http\Controllers\Api\Version_1\Interface\Inventory\InventoryInterface','App\Http\Controllers\Api\Version_1\Repositories\Inventory\InventoryRepository');
 
 
     }
