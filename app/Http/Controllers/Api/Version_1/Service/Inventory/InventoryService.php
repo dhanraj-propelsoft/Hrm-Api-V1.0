@@ -48,13 +48,13 @@ class InventoryService
                 ];
             }
 
-            if ($field === 'inventoryImage') {
-                $rules['inventoryImage'] = [
-                    'required',
-                    'image', // Add image validation rule if it's supposed to be an image
-                    'mimes:jpeg,png,gif,jpg,',
-                ];
-            }
+            // if ($field === 'inventoryImage') {
+            //     $rules['inventoryImage'] = [
+            //         'required',
+            //         'image', // Add image validation rule if it's supposed to be an image
+            //         'mimes:jpeg,png,gif,jpg,',
+            //     ];
+            // }
         }
 
         $validator = Validator::make($datas, $rules);
@@ -75,6 +75,7 @@ class InventoryService
     }
     public function store($datas, $orgId)
     {
+    
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $db_name = $dbConnection['db_name'];
         $validation = $this->ValidationForInventory($datas);
@@ -94,6 +95,7 @@ class InventoryService
     public function convertToModel($data, $db_name)
     {
         $data = (object)$data;
+        
         $id = isset($data->id) ? $data->id : null;
         if ($id) {
             $model = $this->InventoryInterface->inventoryFindById($id);
@@ -106,7 +108,7 @@ class InventoryService
         }
         $previousImageFilename = $model->item_image;
 
-
+        $uniqueFilename ="";
         if (isset($data->inventoryImage)) {
             $decodedImageContents = base64_decode($data->inventoryImage);
             $uniqueFilename = date('YmdHis') . '_' . uniqid() . '.jpg';
