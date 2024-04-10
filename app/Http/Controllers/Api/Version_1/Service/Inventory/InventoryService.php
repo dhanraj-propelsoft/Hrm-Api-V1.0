@@ -47,12 +47,11 @@ class InventoryService
                     'string',
                 ];
             }
-
             // if ($field === 'inventoryImage') {
             //     $rules['inventoryImage'] = [
             //         'required',
-            //         'image', // Add image validation rule if it's supposed to be an image
-            //         'mimes:jpeg,png,gif,jpg,',
+            //         'file',
+            //         'mimes:jpeg,png,gif,jpg',
             //     ];
             // }
         }
@@ -70,12 +69,11 @@ class InventoryService
         return [
             'data' => $resStatus,
             'status_code' => $resCode,
-            'resCode' =>$resCode
+            'resCode' => $resCode
         ];
     }
     public function store($datas, $orgId)
     {
-    
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $db_name = $dbConnection['db_name'];
         $validation = $this->ValidationForInventory($datas);
@@ -85,34 +83,29 @@ class InventoryService
             $response = $this->InventoryInterface->store($model);
             Log::info('ActivitySubsetService -> Store Return.' . json_encode($response));
             return $this->commonService->sendResponse($response, true);
-
         } else {
-            return $validation['data']['errors'] ;
+            return $validation['data']['errors'];
         }
-
     }
 
     public function convertToModel($data, $db_name)
     {
+
         $data = (object)$data;
-        
+
         $id = isset($data->id) ? $data->id : null;
         if ($id) {
             $model = $this->InventoryInterface->inventoryFindById($id);
-            // $model->last_updated_by=auth()->user()->uid;
-            // $model->last_updated_by = null;
         } else {
             $model = new Inventory();
-            // $model->created_by=auth()->user()->uid;
-            // $model->created_by = null;
         }
-        $previousImageFilename = $model->item_image;
 
-        $uniqueFilename ="";
+        $previousImageFilename = $model->item_image;
         if (isset($data->inventoryImage)) {
             $decodedImageContents = base64_decode($data->inventoryImage);
             $uniqueFilename = date('YmdHis') . '_' . uniqid() . '.jpg';
             $directoryPath = storage_path('app/public/' . $db_name . '/inventory');
+            $url = 'app/public/' . $db_name . '/inventory/';
             if (!File::exists($directoryPath)) {
                 File::makeDirectory($directoryPath, 0755, true, true);
             }
@@ -123,20 +116,21 @@ class InventoryService
                 }
             }
             $savePath = $directoryPath . '/' . $uniqueFilename;
-            File::put($savePath, $decodedImageContents);
-            Log::info('InventoryService > savePath function Return.' . json_encode($savePath));
+            if (File::put($savePath, $decodedImageContents) !== false) {
+                Log::info('Image saved successfully: ' . $savePath);
+                $dataUrl = $url . $uniqueFilename;
+                $model->item_image = $dataUrl;
+            } else {
+                Log::error('Failed to save image: ' . $savePath);
+            }
         }
-
-
-
         $model->item_name = $data->inventoryName;
         $model->item_price = $data->inventoryPrice;
-        $model->item_image = $uniqueFilename;
-        // $model->description = $data->description;
         $model->pfm_active_status_id = isset($data->activeStatus) ? $data->activeStatus : 1;
 
         return $model;
     }
+
 
     public function inventoryFindById($orgId, $id)
     {
