@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Version_1\Service\HRM\Master;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\HrTypeInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\HrTypeInterface;
 use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Models\HrmResourceType;
 use Illuminate\Support\Facades\Session;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Version_1\Service\HRM\Master;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DepartmentInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DepartmentInterface;
 use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Models\HrmDepartment;
 use Illuminate\Support\Facades\Session;
@@ -22,6 +22,7 @@ class DepartmentService
     }
     public function findAll($orgId)
     {
+       
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         
         $models = $this->DepartmentInterface->findAll();

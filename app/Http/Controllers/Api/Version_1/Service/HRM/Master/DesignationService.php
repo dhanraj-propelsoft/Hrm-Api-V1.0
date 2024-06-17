@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Version_1\Service\HRM\Master;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesginationInterface;
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DepartmentInterface;
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesignationInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DesginationInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DepartmentInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DesignationInterface;
 use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Models\HrmDepartment;
 use App\Models\HrmDesignation;
