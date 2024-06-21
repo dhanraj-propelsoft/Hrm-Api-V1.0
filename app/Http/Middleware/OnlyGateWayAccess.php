@@ -16,6 +16,10 @@ class OnlyGateWayAccess
      */
     public function handle(Request $request, Closure $next)
     {
+         if ($request->header('X-Project') !== 'http://localhost:8000') {
+             return response('Unauthorized For Example (http://localhost:8000)', 401);
+     }
+
         return $next($request);
     }
 }

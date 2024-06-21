@@ -2,6 +2,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Version_1\Controller\HRM\Inventory\InventoryController;
 
+Route::middleware(['OnlyGateWay.access'])->group(function () {
+
 Route::post('inventoryStore/{orgId}', [InventoryController::class,'store'])->name('inventoryStore');
 Route::get('deleteInventoryById/{orgId}/{id}', [InventoryController::class,'destroy'])->name('deleteInventoryById');
 Route::get('getInventory/{orgId}', [InventoryController::class,'index'])->name('getInventory');
@@ -10,3 +12,4 @@ Route::post('/inventoryValidation/{orgId}', [InventoryController::class, 'invent
 
 // Route::apiResource('inventory/{orgId}',InventoryController::class);
 
+});

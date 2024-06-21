@@ -64,6 +64,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        'OnlyGateWay.access' => \App\Http\Middleware\OnlyGateWayAccess::class,
+         'OnlyGateWay.access' => \App\Http\Middleware\OnlyGateWayAccess::class
     ];
 }

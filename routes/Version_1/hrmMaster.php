@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Version_1\Controller\HRM\Master\DepartmentControlle
 use App\Http\Controllers\Api\Version_1\Controller\HRM\Master\DesignationController;
 use App\Http\Controllers\Api\Version_1\Controller\HRM\Master\HrTypeController;
 
+Route::middleware(['OnlyGateWay.access'])->group(function () {
 
 Route::post('getDepartment/{orgId}', [DepartmentController::class,'index'])->name('getDepartment');
 Route::get('createDepartment/{orgId}', [DepartmentController::class,'create'])->name('createDepartment');
@@ -20,3 +21,4 @@ Route::post('storeHrType/{orgId}', [HrTypeController::class,'store'])->name('sto
 Route::get('findHrType/{orgId}/{id}', [HrTypeController::class,'edit'])->name('findHrType');
 Route::get('destroyHrType/{orgId}/{id}', [HrTypeController::class,'destroy'])->name('destroyHrType');
 Route::get('findDesignationByDeptId/{orgId}/{id}', [DesignationController::class,'findDesignationByDeptId'])->name('findDesignationByDeptId');
+});
