@@ -14,41 +14,44 @@ use Illuminate\Support\Facades\Session;
 
 class CommonService
 {
-    public function __construct(CommonInterface $commonInterface)
-    {
-        $this->commonInterface = $commonInterface;
+  protected $commonInterface;
+  public function __construct(CommonInterface $commonInterface)
+  {
+    $this->commonInterface = $commonInterface;
+  }
+  public function sendResponse($result, $message)
+  {
+    $response = [
+      'success' => true,
+      'data' => $result,
+      'message' => $message,
+    ];
 
+    return response()->json($response, 200);
+  }
+  public function sendError($errorMessages = [], $error, $code = 404)
+  {
+    $response = [
+      'success' => false,
+      'message' => $error,
+    ];
+
+    if (!empty($errorMessages)) {
+      $response['data'] = $errorMessages;
     }
-    public function sendResponse($result, $message)
-    {
-      $response = [
-        'success' => true,
-        'data' => $result,
-        'message' => $message,
-      ];
-  
-      return response()->json($response, 200);
-    }
-    public function sendError($errorMessages = [],$error, $code = 404)
-    {
-      $response = [
-        'success' => false,
-        'message' => $error,
-      ];
-  
-      if (!empty($errorMessages)) {
-        $response['data'] = $errorMessages;
-      }
-      return response()->json($response, $code);
-    }
-    public function getOrganizationDatabaseByOrgId($orgId)
-    {
-        $result = $this->commonInterface->getDataBaseNameByOrgId($orgId);
-        Session::put('currentDatabase', $result->db_name);
-        Config::set('database.connections.mysql_external.database', $result->db_name);
-        DB::purge('mysql');
-        DB::reconnect('mysql');
-        Log::info('CommonService > getOrganizationDatabaseByOrgId function Return.' . json_encode($result));
-        return $result;
-    }
+    return response()->json($response, $code);
+  }
+  public function getOrganizationDatabaseByOrgId($orgId)
+  {
+    $result = $this->commonInterface->getDataBaseNameByOrgId($orgId);
+    Session::put('currentDatabase', $result->db_name);
+    Config::set('database.connections.mysql_external.database', $result->db_name);
+    Config::set('database.connections.mysql_external.username', $result->user_name);
+    Config::set('database.connections.mysql_external.password', $result->password);
+
+    DB::purge('mysql');
+    DB::reconnect('mysql');
+    Log::info('CommonService > getOrganizationDatabaseByOrgId function Return.' . json_encode($result));
+    return $result;
+  }
 }

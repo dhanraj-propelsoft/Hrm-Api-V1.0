@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api\Version_1\Repositories\Hrm\Transaction;
+namespace App\Http\Controllers\Api\Version_1\Repositories\HRM\Transaction;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Transaction\ResourceInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Transaction\ResourceInterface;
 use App\Models\HrmDepartment;
 use App\Models\HrmResource;
 use App\Models\HrmResourceSr;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Version_1\Service\HRM\Transaction;
 
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DepartmentInterface;
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\DesignationInterface;
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Master\HrTypeInterface;
-use App\Http\Controllers\Api\Version_1\Interface\Hrm\Transaction\ResourceInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DepartmentInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\DesignationInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Master\HrTypeInterface;
+use App\Http\Controllers\Api\Version_1\Interface\HRM\Transaction\ResourceInterface;
 use App\Http\Controllers\Api\Version_1\Service\Common\CommonService;
 use App\Models\HrmResource;
 use App\Models\HrmResourceDesignation;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 
 class ResourceService
 {
-    protected $ResourceInterface, $commonService;
+    protected $ResourceInterface, $commonService,$DepartmentInterface,$DesignationInterface, $HrTypeInterface;
     public function __construct(ResourceInterface $ResourceInterface, CommonService $commonService, DepartmentInterface $DepartmentInterface, DesignationInterface $DesignationInterface, HrTypeInterface $HrTypeInterface)
     {
         $this->ResourceInterface = $ResourceInterface;
@@ -56,10 +56,9 @@ class ResourceService
     }
     public function findResourceWithCredentials($datas, $orgId)
     {
-
+     
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $datasObj = (object) $datas;
-
         $mobile = $datasObj->mobileNo;
         $email = $datasObj->email;
         $response = Http::post(config('person_api_base') . 'findExactPersonWithEmailAndMobile', $datas);
@@ -73,23 +72,14 @@ class ResourceService
         }
         // $checkPerson = $this->personInterface->findExactPersonWithEmailAndMobile($email,$mobile);
 
-        /*Some Important Types credential Type Start */
-        /* 1.get All Person */
-        /* 2.None*/
-        /* 3.Person Email Only */
-        /* 4.Resource True */
-        /* 5.Resource false */
-        /* 6.SameOrganizationMember/employee*/
-        /* 7. NotInSameOrganizationMember */
-
-        /*Some Important Types credential Type End */
+       
         if ($checkPerson) {
             $uid = $checkPerson['uid'];
             $response = Http::post(config('person_api_base') . 'findMemberDataByUid', $uid);
             if ($response->successful()) {
                 $responseData = $response->json();
                 $findMember = $responseData['data'];
-
+            
             } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
@@ -157,12 +147,13 @@ class ResourceService
 
     public function getResourceMasterData($orgId)
     {
-
+    
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $response = Http::get(config('person_api_base') . 'getPersonMasterData');
         if ($response->successful()) {
             $responseData = $response->json();
-            $MasterData = $responseData['data'];
+            $masterDatas = $responseData['data'];
+           
             $hrmDepartmentLists = $this->DepartmentInterface->findAll();
             $hrmDesignationLists = $this->DesignationInterface->findAll();
             $hrTypeLists = $this->HrTypeInterface->index();
@@ -183,12 +174,11 @@ class ResourceService
 
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $orgdatas = (object) $datas;
-
         $datas['type'] = 'resource';
         $response = Http::post(config('person_api_base') . 'storePerson', $datas);
         if ($response->successful()) {
             $personModel = $response->json();
-
+            Log::info('HrmResourceService > personModel2.' . json_encode($personModel));
         } else {
             $errorCode = $response->status();
             $errorMessage = $response->body();
@@ -199,20 +189,20 @@ class ResourceService
 
             $personDatas = $personModel['data'];
             $uid = $personDatas['uid'];
-            Log::info('HrmResourceService > saveUid.' . json_encode($uid));
+            Log::info('HrmResourceService > saveUid3.' . json_encode($uid));
             $convertToResourceModel = $this->convertToResourceModel($orgdatas, $uid);
-            Log::info('HrmResourceService > convertToResourceModel.' . json_encode($convertToResourceModel));
+            Log::info('HrmResourceService > convertToResourceModel4.' . json_encode($convertToResourceModel));
 
             //$resourceModel = $this->hrmResourceInterface->saveResourceModel($convertToResourceModel);
             $convertToResourceTypeDetailModel = $this->convertToResourceTypeDetailModel($orgdatas);
             $convertToResourceDesignationModel = $this->convertToResourceDesignationModel($orgdatas);
-            Log::info('HrmResourceService > convertToResourceDesignationModel.' . json_encode($convertToResourceDesignationModel));
+            Log::info('HrmResourceService > convertToResourceDesignationModel5.' . json_encode($convertToResourceDesignationModel));
 
             $convertToResourceService = $this->convertToResourceService($orgdatas);
-            Log::info('HrmResourceService > convertToResourceService.' . json_encode($convertToResourceService));
+            Log::info('HrmResourceService > convertToResourceService6.' . json_encode($convertToResourceService));
 
             $convertToResourceServiceDetails = $this->convertToResourceServiceDetails($orgdatas);
-            Log::info('HrmResourceService > convertToResourceServiceDetails.' . json_encode($convertToResourceServiceDetails));
+            Log::info('HrmResourceService > convertToResourceServiceDetails7.' . json_encode($convertToResourceServiceDetails));
 
             $allModels = [
                 'resourceModel' => $convertToResourceModel,
@@ -231,8 +221,11 @@ class ResourceService
     {
         if (isset($datas->personUid)) {
             $model = $this->ResourceInterface->findResourceByUid($datas->personUid);
+        } 
+        if(isset($model))
+        {
             $model->uid = $uid;
-        } else {
+        }else{
             $model = new HrmResource();
             $model->uid = $uid;
         }
@@ -298,8 +291,8 @@ class ResourceService
         $response = Http::post(config('person_api_base') . 'getPersonMobileNoByUid', $datas);
         if ($response->successful()) {
             $responseData = $response->json();
-            if ($responseData['data']['original']['success'] == true) {
-                $mobileData = $responseData['data']['original']['data'];
+            if ($responseData['success']) {
+                $mobileData = $responseData['data'];
             } else {
                 return $this->commonService->sendResponse('mobileNo Not Found', false);
             }
@@ -356,28 +349,10 @@ class ResourceService
                 $responseData = $response->json();
                 if ($responseData['data']['original']['success'] == true) {
                     $personPrimaryData = $responseData['data']['original']['data'];
+
                 } else {
                     return $this->commonService->sendResponse('Uid Not Found', false);
                 }
-            } else {
-                $errorCode = $response->status();
-                $errorMessage = $response->body();
-                dd("Error: $errorCode - $errorMessage");
-            }
-
-            $response = Http::post(config('person_api_base') . 'personMotherTongueByUid', $uid);
-            if ($response->successful()) {
-                $responseData = $response->json();
-                $personMotherTongues = $responseData['data']['original']['data'];
-            } else {
-                $errorCode = $response->status();
-                $errorMessage = $response->body();
-                dd("Error: $errorCode - $errorMessage");
-            }
-            $response = Http::post(config('person_api_base') . 'personGetAnniversaryDate', $uid);
-            if ($response->successful()) {
-                $responseData = $response->json();
-                $personAnniversaryDate = $responseData['data']['original']['data'];
             } else {
                 $errorCode = $response->status();
                 $errorMessage = $response->body();
@@ -402,10 +377,8 @@ class ResourceService
                 'department' => $department,
                 'designation' => $designation,
                 'resourceType' => $resourceType,
-                'MasterData' => $MasterData,
-                'personPrimaryData' => $personPrimaryData,
-                'personMotherTongues' => $personMotherTongues,
-                'personAnniversaryDate' => $personAnniversaryDate,
+                'masterDatas' => $MasterData,
+                'personDetails' => $personPrimaryData,
                 'personAddress' => $personAddress,
             ];
         }
@@ -442,19 +415,7 @@ class ResourceService
         $datas = (object) $datas;
         $dbConnection = $this->commonService->getOrganizationDatabaseByOrgId($orgId);
         $resourceMaster=$this->resourceAndPersonMasterDatas($datas->uid);
-        $response = Http::post(config('person_api_base') . 'getPersonPrimaryDataByUid', $datas->uid);
-            if ($response->successful()) {
-                $responseData = $response->json();
-                if ($responseData['data']['original']['success'] == true) {
-                    $resourceMaster['personDetails'] = $responseData['data']['original']['data'];
-                } else {
-                    return $this->commonService->sendResponse('Uid Not Found', false);
-                }
-            } else {
-                $errorCode = $response->status();
-                $errorMessage = $response->body();
-                dd("Error: $errorCode - $errorMessage");
-            }
+   
             return $this->commonService->sendResponse($resourceMaster, true);
     }
 }

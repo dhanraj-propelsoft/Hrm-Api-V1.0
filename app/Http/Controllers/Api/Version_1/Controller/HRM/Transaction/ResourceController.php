@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class ResourceController extends Controller
 {
-    public function __construct(ResourceService $ResourceService,CommonService $commonService)
+    protected $ResourceService, $commonService;
+    public function __construct(ResourceService $ResourceService, CommonService $commonService)
     {
         $this->ResourceService = $ResourceService;
         $this->commonService = $commonService;
@@ -47,7 +48,7 @@ class ResourceController extends Controller
     public function store(Request $request, $orgId)
     {
 
-        Log::info('ResourceController > resourcesStore.' . json_encode($request->all(), $orgId));
+        Log::info('ResourceController > resourcesStore1.' . json_encode($request->all(), $orgId));
         $response = $this->ResourceService->resourcesStore($request->all(), $orgId);
         // Log::info('HrmResourceController>Store Return.' . json_encode($response));
         return $response;
@@ -114,45 +115,39 @@ class ResourceController extends Controller
         return $response;
     }
     public function resourceMobileOtp(Request $request, $orgId)
-{
-    Log::info('ResourceController > resourceMobileOtp.' . json_encode($request->all()));
-    $response = $this->ResourceService->resourceMobileOtp($request->all(),$orgId);
-    Log::info('ResourceController> resourceMobileOtp .' . json_encode($response));
-    return $response;
+    {
+        Log::info('ResourceController > resourceMobileOtp.' . json_encode($request->all()));
+        $response = $this->ResourceService->resourceMobileOtp($request->all(), $orgId);
+        Log::info('ResourceController> resourceMobileOtp .' . json_encode($response));
+        return $response;
+    }
+    public function resourceMobileOtpValidate(Request $request, $orgId)
+    {
+        Log::info('ResourceController > resourceMobileOtpValidate.' . json_encode($request->all()));
+        $response = $this->ResourceService->resourceMobileOtpValidate($request->all(), $orgId);
+        Log::info('ResourceController > resourceMobileOtpValidate .' . json_encode($response));
+        return $response;
+    }
+    public function resourceEmailOtp(Request $request, $orgId)
+    {
+        Log::info('ResourceController > resourceEmailOtp.' . json_encode($request->all()));
+        $response = $this->ResourceService->resourceEmailOtp($request->all(), $orgId);
+        Log::info('ResourceController > resourceEmailOtp .' . json_encode($response));
+        return $response;
+    }
+    public function resourceEmailOtpValidate(Request $request, $orgId)
+    {
+        Log::info('ResourceController > resourceEmailOtpValidate.' . json_encode($request->all()));
+        $response = $this->ResourceService->resourceEmailOtpValidate($request->all(), $orgId);
+        Log::info('ResourceController> resourceEmailOtpValidate .' . json_encode($response));
+        return $response;
+    }
+    public function masterDatasForResource(Request $request, $orgId)
+    {
 
-}
-public function resourceMobileOtpValidate(Request $request, $orgId)
-{
-    Log::info('ResourceController > resourceMobileOtpValidate.' . json_encode($request->all()));
-    $response = $this->ResourceService->resourceMobileOtpValidate($request->all(),$orgId);
-    Log::info('ResourceController > resourceMobileOtpValidate .' . json_encode($response));
-    return $response;
-
-}
-public function resourceEmailOtp(Request $request, $orgId)
-{
-    Log::info('ResourceController > resourceEmailOtp.' . json_encode($request->all()));
-    $response = $this->ResourceService->resourceEmailOtp($request->all(),$orgId);
-    Log::info('ResourceController > resourceEmailOtp .' . json_encode($response));
-    return $response;
-
-}
-public function resourceEmailOtpValidate(Request $request, $orgId)
-{
-    Log::info('ResourceController > resourceEmailOtpValidate.' . json_encode($request->all()));
-    $response = $this->ResourceService->resourceEmailOtpValidate($request->all(),$orgId);
-    Log::info('ResourceController> resourceEmailOtpValidate .' . json_encode($response));
-    return $response;
-
-}
-public function masterDatasForResource(Request $request, $orgId)
-{
-
-    Log::info('ResourceController > masterDatasForResource.' . json_encode($request->all()));
-    $response = $this->ResourceService->masterDatasForResource($request->all(),$orgId);
-    Log::info('ResourceController> masterDatasForResource .' . json_encode($response));
-    return $this->commonService->sendResponse($response,true);
-
-
-}
+        Log::info('ResourceController > masterDatasForResource.' . json_encode($request->all()));
+        $response = $this->ResourceService->masterDatasForResource($request->all(), $orgId);
+        Log::info('ResourceController> masterDatasForResource .' . json_encode($response));
+        return $this->commonService->sendResponse($response, true);
+    }
 }
